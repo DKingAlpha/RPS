@@ -1,18 +1,20 @@
 '''
 Rotating Proxy Server
 DKing@0-Sec
+Ported to python3 by JReverse
 '''
 import sys,os,time,random,select  
 import threading  
-import logging  
-import urllib2,socket
+import logging
+import urllib.request
+import socket
 import argparse
 import re
 
 timeout = 7
 maxConnetions = 200  
 proxies = []
-header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36'}
+header = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36'}
 
 def pickup_proxy():
     return random.choice(proxies).split(':')
@@ -21,11 +23,11 @@ def pickup_proxy():
 def fetchproxy(url,reg,delay):
     logging.info("Fetching Proxies @ %s",url)
     try:
-        req = urllib2.Request(url,None,header)
+        req = urllib.request.Request(url,None,header)
     except:
         print("Failed to fetch proxies @ %s",url)
         sys.exit
-    response = urllib2.urlopen(req)
+    response = urllib.request.urlopen(req)
     html = response.read()
     p = re.compile(reg)
     proxy_list = p.findall(html)
@@ -85,7 +87,7 @@ class Proxy:
                 else:  
                     try:  
                         data = self.sock.recv(81920)  
-                    except Exception, e:  
+                    except Exception as e:  
                         logging.error(str(e))  
                         self.on_quit()  
                         continue  
@@ -95,7 +97,7 @@ class Proxy:
                     else:  
                         try:  
                             self.route[self.sock].send(data)  
-                        except Exception, e:  
+                        except Exception as e:  
                             logging.error(str(e))  
                             self.on_quit()  
                             continue  
@@ -109,7 +111,7 @@ class Proxy:
             forward.settimeout(timeout)
             forward.connect((subproxy_ip,subproxy_port))
             logging.info("%s:%d Forwarding success",subproxy_ip,subproxy_port)
-        except Exception, e:  
+        except Exception as e:  
             logging.error('%s:%d Error ... Switching to a New Proxy',subproxy_ip,subproxy_port)  
             client.close()  
             return  
@@ -138,7 +140,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         description='\t\tRPS.py\n\tRotating Proxy Server\nProvide a local HTTP Proxy Interface, forwarding your every request via different HTTP Proxies\nCan be useful to \'bypass\' any Bans on IP from the website\'s firewall',
-        epilog='\nDKing@0-Sec',
+        epilog='\nDKing@0-Sec & JReverse',
         prefix_chars='-/+',
         formatter_class=argparse.RawTextHelpFormatter
     )
@@ -185,7 +187,7 @@ def main():
     try:
         logging.info("Listening on %s:%d",args.ip ,args.port)
         Proxy((args.ip, args.port)).serve_forever()  
-    except KeyboardInterrupt, e:   
+    except KeyboardInterrupt as e:   
         logging.error("User Exited" + str(e))  
 
 if __name__ == "__main__":

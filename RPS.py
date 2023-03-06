@@ -48,8 +48,8 @@ class ProxyPicker:
             return False
         if port.isdigit() == False or int(port) < 0 or int(port) > 65535:
             return False
-        if not (re.match('^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$', addr) or \
-            re.match('^(([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.){3}([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$', addr)):
+        if not (re.match('^\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}\b$', addr) or \
+            re.match('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$', addr)):
             return False
         return (addr, int(port))
 

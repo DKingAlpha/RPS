@@ -128,6 +128,8 @@ class ProxyServer:
                 target_sock.connect((target_host, target_port))
             except Exception as e:
                 logging.error(f'Error: Failed to connect to proxy at {target_host}:{target_port}: {e}')
+                logging.error(f'Error: Removing {target} from proxy pool')
+                self.proxypicker.proxies.remove(target)
                 client_sock.close()
                 continue
 
